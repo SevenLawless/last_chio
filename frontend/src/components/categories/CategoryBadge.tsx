@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
 import { Category } from '../../contexts/TaskContext';
 
 interface CategoryBadgeProps {
@@ -9,21 +8,21 @@ interface CategoryBadgeProps {
 const Badge = styled.div<{ color: string }>`
   display: inline-flex;
   align-items: center;
-  gap: ${theme.spacing.xs};
-  padding: ${theme.spacing.xs} ${theme.spacing.sm};
+  gap: ${props => props.theme.spacing.xs};
+  padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.sm};
   background: ${props => props.color}25;
   border: 1px solid ${props => props.color}50;
-  border-radius: ${theme.borderRadius.sm};
-  font-size: ${theme.typography.fontSizes.small};
+  border-radius: ${props => props.theme.borderRadius.sm};
+  font-size: ${props => props.theme.typography.fontSizes.small};
   color: ${props => props.color};
   font-weight: 500;
-  line-height: ${theme.typography.lineHeights.tight};
+  line-height: ${props => props.theme.typography.lineHeights.tight};
 `;
 
 const ColorDot = styled.div<{ color: string }>`
   width: 6px;
   height: 6px;
-  border-radius: ${theme.borderRadius.full};
+  border-radius: ${props => props.theme.borderRadius.full};
   background: ${props => props.color};
 `;
 

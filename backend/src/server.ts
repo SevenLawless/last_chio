@@ -5,6 +5,7 @@ import authRoutes from './routes/auth';
 import categoryRoutes from './routes/categories';
 import missionRoutes from './routes/missions';
 import selectedTaskRoutes from './routes/selectedTasks';
+import userRoutes from './routes/user';
 import { startDailyReset } from './utils/dailyReset';
 import pool from './config/database';
 
@@ -49,6 +50,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/missions', missionRoutes);
 app.use('/api/selected-tasks', selectedTaskRoutes);
+app.use('/api/user', userRoutes);
 
 // Health check with database connectivity
 app.get('/health', async (req, res) => {

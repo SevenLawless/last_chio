@@ -1,67 +1,129 @@
-export const theme = {
+// Helper function to lighten a color
+const lightenColor = (hex: string, percent: number): string => {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const r = Math.min(255, Math.floor((num >> 16) + (255 - (num >> 16)) * percent));
+  const g = Math.min(255, Math.floor(((num >> 8) & 0x00FF) + (255 - ((num >> 8) & 0x00FF)) * percent));
+  const b = Math.min(255, Math.floor((num & 0x0000FF) + (255 - (num & 0x0000FF)) * percent));
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+};
+
+// Helper function to darken a color
+const darkenColor = (hex: string, percent: number): string => {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const r = Math.max(0, Math.floor((num >> 16) * (1 - percent)));
+  const g = Math.max(0, Math.floor(((num >> 8) & 0x00FF) * (1 - percent)));
+  const b = Math.max(0, Math.floor((num & 0x0000FF) * (1 - percent)));
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+};
+
+// Helper function to convert hex to rgba
+const hexToRgba = (hex: string, alpha: number): string => {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+// Helper function to get text color (dark or light) based on background
+const getTextColor = (bgColor: string): string => {
+  const num = parseInt(bgColor.replace('#', ''), 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness > 128 ? '#2C4A52' : '#FFFFFF';
+};
+
+export interface ThemeColors {
+  primary_color: string;
+  background_base_color: string;
+  background_surface_color: string;
+  accent_color: string;
+}
+
+export const generateTheme = (colors?: Partial<ThemeColors>) => {
+  const primaryColor = colors?.primary_color || '#5A9AA8';
+  const backgroundBaseColor = colors?.background_base_color || '#C4DDE0';
+  const backgroundSurfaceColor = colors?.background_surface_color || '#F5E6D3';
+  const accentColor = colors?.accent_color || '#D4A574';
+
+  // Generate derived colors
+  const primaryLight = lightenColor(primaryColor, 0.2);
+  const primaryDark = darkenColor(primaryColor, 0.15);
+  const accentLight = lightenColor(accentColor, 0.15);
+  const accentDark = darkenColor(accentColor, 0.15);
+  const backgroundElevated = darkenColor(backgroundSurfaceColor, 0.1);
+
+  // Generate text colors
+  const textPrimary = getTextColor(backgroundBaseColor);
+  const textSecondary = darkenColor(primaryColor, 0.3);
+  const textTertiary = darkenColor(primaryColor, 0.5);
+
+  return {
   colors: {
-    // Palette Colors from Image
+    // Palette Colors
     palette: {
-      lightBlueGreen: '#C4DDE0',    // Top band - muted pale sky/clear water
-      mediumBlueGreen: '#5A9AA8',   // Second band - ocean water
-      paleCream: '#F5E6D3',         // Third band - sand/light beige
-      warmOrange: '#D4A574'         // Bottom band - terracotta/sunset
+      lightBlueGreen: backgroundBaseColor,
+      mediumBlueGreen: primaryColor,
+      paleCream: backgroundSurfaceColor,
+      warmOrange: accentColor
     },
-    // Primary Colors (using medium blue-green as primary)
+    // Primary Colors
     primary: {
-      main: '#5A9AA8',              // Medium blue-green
-      light: '#7BB5C2',             // Lighter variant
-      dark: '#4A7A85',              // Darker variant
-      gradient: 'linear-gradient(135deg, #5A9AA8 0%, #7BB5C2 100%)'
+      main: primaryColor,
+      light: primaryLight,
+      dark: primaryDark,
+      gradient: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryLight} 100%)`
     },
     // Accent Colors
     accent: {
-      orange: '#D4A574',            // Warm orange for secondary actions
-      orangeLight: '#E4B894',       // Lighter orange
-      orangeDark: '#B8955A',        // Darker orange
-      blueGreen: '#C4DDE0',         // Light blue-green accent
-      blueGreenDark: '#A8C4C8'      // Slightly darker variant
+      orange: accentColor,
+      orangeLight: accentLight,
+      orangeDark: accentDark,
+      blueGreen: backgroundBaseColor,
+      blueGreenDark: darkenColor(backgroundBaseColor, 0.1)
     },
     // Background Colors
     background: {
-      base: '#C4DDE0',              // Light blue-green - main app background
-      surface: '#F5E6D3',           // Pale cream - cards, panels
-      elevated: '#E8D4BC',          // Slightly darker cream - elevated surfaces
-      overlay: 'rgba(90, 154, 168, 0.85)' // Medium blue-green overlay for modals
+      base: backgroundBaseColor,
+      surface: backgroundSurfaceColor,
+      elevated: backgroundElevated,
+      overlay: hexToRgba(primaryColor, 0.85)
     },
-    // Text Colors (dark for contrast on light backgrounds)
+    // Text Colors
     text: {
-      primary: '#2C4A52',            // Dark blue-green for primary text
-      secondary: '#5A7A85',         // Medium blue-green for secondary text
-      tertiary: '#8A9A9F',          // Lighter blue-green for tertiary text
-      dark: '#2C4A52',              // Dark text
-      onOrange: '#FFFFFF',          // White text on orange backgrounds
-      onCream: '#4A5A5F'            // Dark text on cream backgrounds
+      primary: textPrimary,
+      secondary: textSecondary,
+      tertiary: textTertiary,
+      dark: textPrimary,
+      onOrange: '#FFFFFF',
+      onCream: getTextColor(backgroundSurfaceColor)
     },
     // Border Colors
     border: {
-      default: 'rgba(90, 154, 168, 0.2)',   // Medium blue-green with opacity
-      light: 'rgba(90, 154, 168, 0.1)',     // Lighter border
-      medium: 'rgba(90, 154, 168, 0.3)',    // Medium border
-      strong: 'rgba(90, 154, 168, 0.5)',    // Strong border
-      cream: 'rgba(212, 165, 116, 0.2)',    // Orange border variant
-      creamLight: 'rgba(212, 165, 116, 0.1)' // Light orange border
+      default: hexToRgba(primaryColor, 0.2),
+      light: hexToRgba(primaryColor, 0.1),
+      medium: hexToRgba(primaryColor, 0.3),
+      strong: hexToRgba(primaryColor, 0.5),
+      cream: hexToRgba(accentColor, 0.2),
+      creamLight: hexToRgba(accentColor, 0.1)
     },
-    // Status Colors (harmonized with palette)
+    // Status Colors
     status: {
-      success: '#6BA87A',           // Green that complements blue-green
+      success: '#6BA87A',
       successLight: '#8BC49A',
-      warning: '#D4A574',           // Warm orange for warnings
-      warningLight: '#E4B894',
-      error: '#C87A6A',            // Muted red-orange that works with palette
+      warning: accentColor,
+      warningLight: accentLight,
+      error: '#C87A6A',
       errorLight: '#D89A8A'
     },
     input: {
-      background: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white
-      textColor: '#2C4A52',                    // Dark text
-      borderColor: 'rgba(90, 154, 168, 0.3)',
+      background: 'rgba(255, 255, 255, 0.5)',
+      textColor: textPrimary,
+      borderColor: hexToRgba(primaryColor, 0.3),
       borderRadius: '8px',
-      shadow: 'rgba(90, 154, 168, 0.1) 0px 2px 4px inset'
+      shadow: `${hexToRgba(primaryColor, 0.1)} 0px 2px 4px inset`
     }
   },
   typography: {
@@ -102,7 +164,11 @@ export const theme = {
     full: '50%'
   },
   colorScheme: 'light'
+  };
 };
 
-export type Theme = typeof theme;
+// Default theme for backwards compatibility
+export const theme = generateTheme();
+
+export type Theme = ReturnType<typeof generateTheme>;
 

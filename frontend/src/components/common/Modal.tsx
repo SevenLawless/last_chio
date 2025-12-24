@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
 import { ReactNode } from 'react';
 
 interface ModalProps {
@@ -17,7 +16,7 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background: ${theme.colors.background.overlay};
+  background: ${props => props.theme.colors.background.overlay};
   z-index: 1000;
   align-items: center;
   justify-content: center;
@@ -25,37 +24,37 @@ const Overlay = styled.div<{ isOpen: boolean }>`
 `;
 
 const ModalContainer = styled.div`
-  background: ${theme.colors.background.surface};
-  border: 1px solid ${theme.colors.border.default};
-  border-radius: ${theme.borderRadius.md};
-  padding: ${theme.spacing.lg};
+  background: ${props => props.theme.colors.background.surface};
+  border: 1px solid ${props => props.theme.colors.border.default};
+  border-radius: ${props => props.theme.borderRadius.md};
+  padding: ${props => props.theme.spacing.lg};
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(90, 154, 168, 0.3);
+  box-shadow: 0 8px 32px ${props => props.theme.colors.primary.main}4D;
 `;
 
 const ModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${theme.spacing.md};
+  margin-bottom: ${props => props.theme.spacing.md};
 `;
 
 const ModalTitle = styled.h2`
-  font-size: ${theme.typography.fontSizes.h3};
-  font-family: ${theme.typography.fontFamilies.heading};
-  color: ${theme.colors.text.primary};
+  font-size: ${props => props.theme.typography.fontSizes.h3};
+  font-family: ${props => props.theme.typography.fontFamilies.heading};
+  color: ${props => props.theme.colors.text.primary};
   margin: 0;
   font-weight: 600;
-  line-height: ${theme.typography.lineHeights.tight};
+  line-height: ${props => props.theme.typography.lineHeights.tight};
 `;
 
 const CloseButton = styled.button`
   background: none;
   border: none;
-  color: ${theme.colors.text.secondary};
+  color: ${props => props.theme.colors.text.secondary};
   font-size: 20px;
   cursor: pointer;
   padding: 0;
@@ -64,22 +63,22 @@ const CloseButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: ${theme.borderRadius.sm};
+  border-radius: ${props => props.theme.borderRadius.sm};
   transition: all 0.2s ease;
 
   &:hover {
-    color: ${theme.colors.text.primary};
-    background: ${theme.colors.background.elevated};
+    color: ${props => props.theme.colors.text.primary};
+    background: ${props => props.theme.colors.background.elevated};
   }
 `;
 
 const ModalBody = styled.div`
-  margin-bottom: ${theme.spacing.md};
+  margin-bottom: ${props => props.theme.spacing.md};
 `;
 
 const ModalFooter = styled.div`
   display: flex;
-  gap: ${theme.spacing.sm};
+  gap: ${props => props.theme.spacing.sm};
   justify-content: flex-end;
 `;
 

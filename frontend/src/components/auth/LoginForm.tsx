@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from '../common/Button';
@@ -12,57 +11,57 @@ const FormContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: ${theme.spacing.lg};
-  background: ${theme.colors.background.base};
+  padding: ${props => props.theme.spacing.lg};
+  background: ${props => props.theme.colors.background.base};
 `;
 
 const FormCard = styled.div`
-  background: ${theme.colors.background.surface};
-  border: 1px solid ${theme.colors.border.default};
-  border-radius: ${theme.borderRadius.md};
-  padding: ${theme.spacing.xl};
+  background: ${props => props.theme.colors.background.surface};
+  border: 1px solid ${props => props.theme.colors.border.default};
+  border-radius: ${props => props.theme.borderRadius.md};
+  padding: ${props => props.theme.spacing.xl};
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 4px 16px rgba(90, 154, 168, 0.2);
+  box-shadow: 0 4px 16px ${props => props.theme.colors.primary.main}33;
 `;
 
 const Title = styled.h1`
-  font-size: ${theme.typography.fontSizes.h2};
-  font-family: ${theme.typography.fontFamilies.heading};
-  color: ${theme.colors.text.primary};
-  margin-bottom: ${theme.spacing.lg};
+  font-size: ${props => props.theme.typography.fontSizes.h2};
+  font-family: ${props => props.theme.typography.fontFamilies.heading};
+  color: ${props => props.theme.colors.text.primary};
+  margin-bottom: ${props => props.theme.spacing.lg};
   text-align: center;
   font-weight: 600;
-  line-height: ${theme.typography.lineHeights.tight};
+  line-height: ${props => props.theme.typography.lineHeights.tight};
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.md};
+  gap: ${props => props.theme.spacing.md};
 `;
 
 const ErrorMessage = styled.div`
-  color: ${theme.colors.status.error};
-  font-size: ${theme.typography.fontSizes.small};
-  padding: ${theme.spacing.sm} ${theme.spacing.md};
+  color: ${props => props.theme.colors.status.error};
+  font-size: ${props => props.theme.typography.fontSizes.small};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   background: rgba(200, 122, 106, 0.15);
-  border-radius: ${theme.borderRadius.sm};
+  border-radius: ${props => props.theme.borderRadius.sm};
   border: 1px solid rgba(200, 122, 106, 0.3);
 `;
 
 const LinkText = styled.div`
   text-align: center;
-  margin-top: ${theme.spacing.md};
-  color: ${theme.colors.text.secondary};
-  font-size: ${theme.typography.fontSizes.body};
+  margin-top: ${props => props.theme.spacing.md};
+  color: ${props => props.theme.colors.text.secondary};
+  font-size: ${props => props.theme.typography.fontSizes.body};
 
   a {
-    color: ${theme.colors.primary.main};
+    color: ${props => props.theme.colors.primary.main};
     transition: color 0.2s ease;
 
     &:hover {
-      color: ${theme.colors.primary.light};
+      color: ${props => props.theme.colors.primary.light};
     }
   }
 `;

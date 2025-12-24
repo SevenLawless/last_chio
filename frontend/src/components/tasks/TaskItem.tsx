@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
 import { Task, useTasks } from '../../contexts/TaskContext';
 import Button from '../common/Button';
 
@@ -13,19 +12,33 @@ interface TaskItemProps {
 const TaskContainer = styled.div<{ completed: boolean }>`
   display: flex;
   align-items: center;
-  gap: ${theme.spacing.sm};
-  padding: ${theme.spacing.sm} ${theme.spacing.md};
-  background: ${theme.colors.background.elevated};
-  border: 1px solid ${theme.colors.border.light};
-  border-radius: ${theme.borderRadius.sm};
-  margin-left: ${theme.spacing.lg};
-  margin-bottom: ${theme.spacing.xs};
+  gap: ${props => props.theme.spacing.sm};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  background: ${props => props.theme.colors.background.elevated};
+  border: 1px solid ${props => props.theme.colors.border.light};
+  border-radius: ${props => props.theme.borderRadius.sm};
+  margin-left: ${props => props.theme.spacing.lg};
+  margin-bottom: ${props => props.theme.spacing.xs};
   opacity: ${props => props.completed ? 0.6 : 1};
-  transition: all 0.2s ease;
+  transform: scale(1);
+  transition: all 0.25s ease;
+  animation: slideIn 0.3s ease-out;
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-10px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
 
   &:hover {
-    border-color: ${theme.colors.border.default};
+    border-color: ${props => props.theme.colors.border.default};
     background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.01);
   }
 `;
 
@@ -33,20 +46,20 @@ const Checkbox = styled.input`
   width: 16px;
   height: 16px;
   cursor: pointer;
-  accent-color: ${theme.colors.primary.main};
+  accent-color: ${props => props.theme.colors.primary.main};
 `;
 
 const TaskTitle = styled.span<{ completed: boolean }>`
   flex: 1;
-  font-size: ${theme.typography.fontSizes.body};
-  color: ${theme.colors.text.primary};
-  line-height: ${theme.typography.lineHeights.normal};
+  font-size: ${props => props.theme.typography.fontSizes.body};
+  color: ${props => props.theme.colors.text.primary};
+  line-height: ${props => props.theme.typography.lineHeights.normal};
   text-decoration: ${props => props.completed ? 'line-through' : 'none'};
 `;
 
 const TaskActions = styled.div`
   display: flex;
-  gap: ${theme.spacing.xs};
+  gap: ${props => props.theme.spacing.xs};
 `;
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, missionId: _missionId, onSelect, isSelected }) => {

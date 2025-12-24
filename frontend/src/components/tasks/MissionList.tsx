@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
 import { useTasks } from '../../contexts/TaskContext';
 import MissionItem from './MissionItem';
 import TaskForm from './TaskForm';
@@ -14,32 +13,32 @@ const Container = styled.div`
 `;
 
 const Header = styled.div`
-  padding: ${theme.spacing.md} ${theme.spacing.lg};
-  border-bottom: 1px solid ${theme.colors.border.default};
-  background: ${theme.colors.background.elevated};
+  padding: ${props => props.theme.spacing.md} ${props => props.theme.spacing.lg};
+  border-bottom: 1px solid ${props => props.theme.colors.border.default};
+  background: ${props => props.theme.colors.background.elevated};
 `;
 
 const Title = styled.h2`
-  font-size: ${theme.typography.fontSizes.h3};
-  font-family: ${theme.typography.fontFamilies.heading};
-  color: ${theme.colors.text.primary};
-  margin: 0 0 ${theme.spacing.sm} 0;
+  font-size: ${props => props.theme.typography.fontSizes.h3};
+  font-family: ${props => props.theme.typography.fontFamilies.heading};
+  color: ${props => props.theme.colors.text.primary};
+  margin: 0 0 ${props => props.theme.spacing.sm} 0;
   font-weight: 600;
-  line-height: ${theme.typography.lineHeights.tight};
+  line-height: ${props => props.theme.typography.lineHeights.tight};
 `;
 
 const Content = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: ${theme.spacing.md};
-  background: ${theme.colors.background.base};
+  padding: ${props => props.theme.spacing.md};
+  background: ${props => props.theme.colors.background.base};
 `;
 
 const EmptyState = styled.div`
   text-align: center;
-  padding: ${theme.spacing.xl};
-  color: ${theme.colors.text.secondary};
-  font-size: ${theme.typography.fontSizes.body};
+  padding: ${props => props.theme.spacing.xl};
+  color: ${props => props.theme.colors.text.secondary};
+  font-size: ${props => props.theme.typography.fontSizes.body};
 `;
 
 const MissionList: React.FC = () => {

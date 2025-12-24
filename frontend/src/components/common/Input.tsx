@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
 
 interface InputProps {
   type?: string;
@@ -13,26 +12,26 @@ interface InputProps {
 }
 
 const StyledInput = styled.input<InputProps>`
-  background: ${theme.colors.input.background};
-  color: ${theme.colors.input.textColor};
-  border: 1px solid ${theme.colors.border.default};
-  padding: ${theme.spacing.sm} ${theme.spacing.md};
-  font-size: ${theme.typography.fontSizes.body};
-  font-family: ${theme.typography.fontFamilies.body};
-  line-height: ${theme.typography.lineHeights.normal};
+  background: ${props => props.theme.colors.input.background};
+  color: ${props => props.theme.colors.input.textColor};
+  border: 1px solid ${props => props.theme.colors.border.default};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  font-size: ${props => props.theme.typography.fontSizes.body};
+  font-family: ${props => props.theme.typography.fontFamilies.body};
+  line-height: ${props => props.theme.typography.lineHeights.normal};
   width: ${props => props.fullWidth ? '100%' : 'auto'};
-  border-radius: ${theme.borderRadius.sm};
+  border-radius: ${props => props.theme.borderRadius.sm};
   outline: none;
   transition: all 0.2s ease;
 
   &:focus {
-    border-color: ${theme.colors.primary.main};
-    box-shadow: 0 0 0 3px rgba(90, 154, 168, 0.15);
+    border-color: ${props => props.theme.colors.primary.main};
+    box-shadow: 0 0 0 3px ${props => props.theme.colors.primary.main}26;
     background: rgba(255, 255, 255, 0.7);
   }
 
   &::placeholder {
-    color: ${theme.colors.text.tertiary};
+    color: ${props => props.theme.colors.text.tertiary};
     opacity: 0.6;
   }
 `;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useTasks, Category } from '../../contexts/TaskContext';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
@@ -8,17 +8,17 @@ import Input from '../common/Input';
 
 const FloatingButton = styled.button`
   position: fixed;
-  bottom: ${theme.spacing.lg};
-  right: ${theme.spacing.lg};
+  bottom: ${props => props.theme.spacing.lg};
+  right: ${props => props.theme.spacing.lg};
   width: 48px;
   height: 48px;
-  border-radius: ${theme.borderRadius.full};
-  background: ${theme.colors.primary.main};
-  color: ${theme.colors.text.onOrange};
+  border-radius: ${props => props.theme.borderRadius.full};
+  background: ${props => props.theme.colors.primary.main};
+  color: ${props => props.theme.colors.text.onOrange};
   border: none;
   font-size: 20px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(90, 154, 168, 0.3);
+  box-shadow: 0 4px 12px ${props => props.theme.colors.primary.main}4D;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,8 +27,8 @@ const FloatingButton = styled.button`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(90, 154, 168, 0.4);
-    background: ${theme.colors.primary.light};
+    box-shadow: 0 6px 16px ${props => props.theme.colors.primary.main}66;
+    background: ${props => props.theme.colors.primary.light};
   }
 
   &:active {
@@ -39,45 +39,45 @@ const FloatingButton = styled.button`
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.sm};
-  margin-bottom: ${theme.spacing.md};
+  gap: ${props => props.theme.spacing.sm};
+  margin-bottom: ${props => props.theme.spacing.md};
 `;
 
 const Label = styled.label`
-  font-size: ${theme.typography.fontSizes.body};
-  color: ${theme.colors.text.primary};
+  font-size: ${props => props.theme.typography.fontSizes.body};
+  color: ${props => props.theme.colors.text.primary};
   font-weight: 500;
 `;
 
 const ColorInput = styled.input`
   width: 100%;
   height: 36px;
-  border: 1px solid ${theme.colors.border.default};
-  border-radius: ${theme.borderRadius.sm};
+  border: 1px solid ${props => props.theme.colors.border.default};
+  border-radius: ${props => props.theme.borderRadius.sm};
   cursor: pointer;
-  background: ${theme.colors.background.elevated};
+  background: ${props => props.theme.colors.background.elevated};
 `;
 
 const CategoryList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing.xs};
-  margin-bottom: ${theme.spacing.md};
-  margin-top: ${theme.spacing.md};
+  gap: ${props => props.theme.spacing.xs};
+  margin-bottom: ${props => props.theme.spacing.md};
+  margin-top: ${props => props.theme.spacing.md};
 `;
 
 const CategoryItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${theme.spacing.sm} ${theme.spacing.md};
-  background: ${theme.colors.background.elevated};
-  border: 1px solid ${theme.colors.border.default};
-  border-radius: ${theme.borderRadius.sm};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  background: ${props => props.theme.colors.background.elevated};
+  border: 1px solid ${props => props.theme.colors.border.default};
+  border-radius: ${props => props.theme.borderRadius.sm};
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: ${theme.colors.border.medium};
+    border-color: ${props => props.theme.colors.border.medium};
     background: rgba(255, 255, 255, 0.3);
   }
 `;
@@ -85,18 +85,19 @@ const CategoryItem = styled.div`
 const CategoryInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: ${theme.spacing.sm};
+  gap: ${props => props.theme.spacing.sm};
 `;
 
 const ColorDot = styled.div<{ color: string }>`
   width: 16px;
   height: 16px;
-  border-radius: ${theme.borderRadius.full};
+  border-radius: ${props => props.theme.borderRadius.full};
   background: ${props => props.color};
-  border: 1px solid ${theme.colors.border.default};
+  border: 1px solid ${props => props.theme.colors.border.default};
 `;
 
 const CategoryManager: React.FC = () => {
+  const { theme } = useTheme();
   const { categories, createCategory, updateCategory, deleteCategory } = useTasks();
   const [isOpen, setIsOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);

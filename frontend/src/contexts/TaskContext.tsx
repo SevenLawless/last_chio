@@ -161,47 +161,205 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const createMission = async (title: string, categoryId: number | null) => {
-    await api.post('/missions', { title, category_id: categoryId });
-    await refreshMissions();
+    // Optimistic update - add mission with temporary ID
+    const tempId = Date.now(); // Temporary ID
+    const newMission: Mission = {
+      id: tempId,
+      user_id: 0, // Will be set by server
+      category_id: categoryId,
+      title,
+      state: 'NOT_STARTED',
+      display_order: 0,
+      cancelled_at: null,
+      created_at: new Date().toISOString(),
+      tasks: []
+    };
+
+    setMissions(prev => [...prev, newMission]);
+
+    // Sync in background
+    try {
+      await api.post('/missions', { title, category_id: categoryId });
+      await refreshMissions();
+    } catch (error) {
+      // Rollback on error
+      await refreshMissions();
+      throw error;
+    }
   };
 
   const updateMission = async (id: number, data: Partial<Mission>) => {
-    await api.put(`/missions/${id}`, data);
-    await refreshMissions();
-    await refreshSelectedTasks();
+    // Optimistic update for mission state changes
+    if (data.state !== undefined || data.title !== undefined) {
+      setMissions(prev => prev.map(mission => 
+        mission.id === id ? { ...mission, ...data } : mission
+      ));
+    }
+
+    // Sync in background
+    try {
+      await api.put(`/missions/${id}`, data);
+      await refreshMissions();
+      await refreshSelectedTasks();
+    } catch (error) {
+      // Rollback on error
+      await refreshMissions();
+      await refreshSelectedTasks();
+      throw error;
+    }
   };
 
   const cancelMission = async (id: number) => {
-    await api.delete(`/missions/${id}`);
-    await refreshMissions();
-    await refreshSelectedTasks();
+    // Optimistic update - remove mission immediately
+    const missionToRemove = missions.find(m => m.id === id);
+    const taskIds = missionToRemove?.tasks?.map(t => t.id) || [];
+
+    setMissions(prev => prev.filter(mission => mission.id !== id));
+    setSelectedTasks(prev => prev.filter(st => !taskIds.includes(st.task_id)));
+
+    // Sync in background
+    try {
+      await api.delete(`/missions/${id}`);
+      await refreshMissions();
+      await refreshSelectedTasks();
+    } catch (error) {
+      // Rollback on error
+      await refreshMissions();
+      await refreshSelectedTasks();
+      throw error;
+    }
   };
 
   const createTask = async (missionId: number, title: string) => {
-    await api.post(`/missions/${missionId}/tasks`, { title });
-    await refreshMissions();
+    // Optimistic update - add task with temporary ID
+    const tempId = Date.now(); // Temporary ID
+    const newTask: Task = {
+      id: tempId,
+      mission_id: missionId,
+      title,
+      state: 'NOT_STARTED',
+      display_order: 0,
+      cancelled_at: null,
+      created_at: new Date().toISOString()
+    };
+
+    setMissions(prev => prev.map(mission => 
+      mission.id === missionId 
+        ? { ...mission, tasks: [...(mission.tasks || []), newTask] }
+        : mission
+    ));
+
+    // Sync in background
+    try {
+      await api.post(`/missions/${missionId}/tasks`, { title });
+      await refreshMissions();
+    } catch (error) {
+      // Rollback on error
+      await refreshMissions();
+      throw error;
+    }
   };
 
   const updateTask = async (id: number, data: Partial<Task>) => {
-    await api.put(`/missions/tasks/${id}`, data);
-    await refreshMissions();
-    await refreshSelectedTasks();
+    // Optimistic update for task state changes
+    if (data.state !== undefined) {
+      setMissions(prev => prev.map(mission => ({
+        ...mission,
+        tasks: mission.tasks?.map(task => 
+          task.id === id ? { ...task, ...data } : task
+        )
+      })));
+      setSelectedTasks(prev => prev.map(st => 
+        st.task_id === id ? { ...st, ...data } : st
+      ));
+    }
+
+    // Sync in background
+    try {
+      await api.put(`/missions/tasks/${id}`, data);
+      await refreshMissions();
+      await refreshSelectedTasks();
+    } catch (error) {
+      // Rollback on error
+      await refreshMissions();
+      await refreshSelectedTasks();
+      throw error;
+    }
   };
 
   const cancelTask = async (id: number) => {
-    await api.delete(`/missions/tasks/${id}`);
-    await refreshMissions();
-    await refreshSelectedTasks();
+    // Optimistic update - remove task immediately
+    const taskToRemove = missions
+      .flatMap(m => m.tasks || [])
+      .find(t => t.id === id);
+
+    setMissions(prev => prev.map(mission => ({
+      ...mission,
+      tasks: mission.tasks?.filter(task => task.id !== id)
+    })));
+    setSelectedTasks(prev => prev.filter(st => st.task_id !== id));
+
+    // Sync in background
+    try {
+      await api.delete(`/missions/tasks/${id}`);
+      await refreshMissions();
+      await refreshSelectedTasks();
+    } catch (error) {
+      // Rollback on error
+      await refreshMissions();
+      await refreshSelectedTasks();
+      throw error;
+    }
   };
 
   const addSelectedTask = async (taskId: number) => {
-    await api.post('/selected-tasks', { task_id: taskId });
-    await refreshSelectedTasks();
+    // Find task info for optimistic update
+    const task = missions
+      .flatMap(m => m.tasks || [])
+      .find(t => t.id === taskId);
+    const mission = missions.find(m => m.tasks?.some(t => t.id === taskId));
+
+    if (task && mission) {
+      // Optimistic update - add to selected tasks immediately
+      const tempId = Date.now();
+      const newSelectedTask: SelectedTask = {
+        id: tempId,
+        user_id: 0,
+        task_id: taskId,
+        display_order: selectedTasks.length + 1,
+        created_at: new Date().toISOString(),
+        title: task.title,
+        state: task.state,
+        mission_id: mission.id,
+        mission_title: mission.title
+      };
+      setSelectedTasks(prev => [...prev, newSelectedTask]);
+    }
+
+    // Sync in background
+    try {
+      await api.post('/selected-tasks', { task_id: taskId });
+      await refreshSelectedTasks();
+    } catch (error) {
+      // Rollback on error
+      await refreshSelectedTasks();
+      throw error;
+    }
   };
 
   const removeSelectedTask = async (id: number) => {
-    await api.delete(`/selected-tasks/${id}`);
-    await refreshSelectedTasks();
+    // Optimistic update - remove immediately
+    setSelectedTasks(prev => prev.filter(st => st.id !== id));
+
+    // Sync in background
+    try {
+      await api.delete(`/selected-tasks/${id}`);
+      await refreshSelectedTasks();
+    } catch (error) {
+      // Rollback on error
+      await refreshSelectedTasks();
+      throw error;
+    }
   };
 
   const reorderSelectedTasks = async (tasks: { id: number; display_order: number }[]) => {
