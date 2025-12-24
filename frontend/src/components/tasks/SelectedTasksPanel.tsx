@@ -146,7 +146,7 @@ const SelectedTasksPanel: React.FC = () => {
       <Content>
         {displayTasks.length === 0 ? (
           <EmptyState>
-            <p>No selected tasks. Select tasks from missions to focus on them here.</p>
+            <p>No tasks in today's focus. Select tasks from missions to focus on them here.</p>
           </EmptyState>
         ) : (
           displayTasks.map((task, index) => (

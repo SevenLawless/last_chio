@@ -1,5 +1,5 @@
 {
-  "name": "task-manager-backend",
+  "name": "chio-backend",
   "version": "1.0.0",
   "description": "Backend API for daily task management app",
   "main": "dist/server.js",
