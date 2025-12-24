@@ -8,11 +8,15 @@ function getDbConfig() {
   // Railway provides MYSQL_URL or DATABASE_URL
   const dbUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
   
+  console.log('Database configuration check:');
+  console.log('- MYSQL_URL exists:', !!process.env.MYSQL_URL);
+  console.log('- DATABASE_URL exists:', !!process.env.DATABASE_URL);
+  
   if (dbUrl) {
     try {
       // Parse MySQL URL format: mysql://user:password@host:port/database
       const url = new URL(dbUrl);
-      return {
+      const config = {
         host: url.hostname,
         port: parseInt(url.port || '3306'),
         user: url.username,
@@ -22,6 +26,12 @@ function getDbConfig() {
         connectionLimit: 10,
         queueLimit: 0
       };
+      console.log('Using database URL connection');
+      console.log('- Host:', config.host);
+      console.log('- Port:', config.port);
+      console.log('- Database:', config.database);
+      console.log('- User:', config.user);
+      return config;
     } catch (error) {
       console.error('Error parsing database URL:', error);
       // Fall through to individual env vars
@@ -29,7 +39,7 @@ function getDbConfig() {
   }
   
   // Fallback to individual environment variables
-  return {
+  const config = {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '3306'),
     user: process.env.DB_USER || 'root',
@@ -39,6 +49,13 @@ function getDbConfig() {
     connectionLimit: 10,
     queueLimit: 0
   };
+  
+  console.log('Using individual environment variables (fallback)');
+  console.log('- Host:', config.host);
+  console.log('- Port:', config.port);
+  console.log('- Database:', config.database);
+  
+  return config;
 }
 
 const pool = mysql.createPool(getDbConfig());

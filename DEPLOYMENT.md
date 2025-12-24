@@ -62,7 +62,21 @@ If you have Railway CLI installed, you can connect and run the SQL directly.
 4. Find **"Build Command"** and set it to: `npm install && npm run build`
 5. Find **"Start Command"** and set it to: `npm start`
 
-### 3.3 Set Backend Environment Variables
+### 3.3 Link MySQL Service to Backend
+
+**IMPORTANT**: Before setting environment variables, you need to link the MySQL service to your backend service so Railway can automatically provide the connection URL.
+
+1. In your backend service, go to the **"Variables"** tab
+2. Look for a section called **"Add from Service"** or **"Reference"** (Railway's interface may vary)
+3. Click to add a reference to your **MySQL service**
+4. This will automatically add `MYSQL_URL` environment variable
+5. Verify that `MYSQL_URL` appears in your Variables list
+
+**Alternative method** (if the above doesn't work):
+- In your backend service Settings, look for **"Service Dependencies"** or **"Connected Services"**
+- Add your MySQL service as a dependency
+
+### 3.4 Set Backend Environment Variables
 
 1. Still in the backend service, go to the **"Variables"** tab
 2. Click **"+ New Variable"** and add these variables one by one:
@@ -73,17 +87,28 @@ If you have Railway CLI installed, you can connect and run the SQL directly.
    - `FRONTEND_URL` = (we'll set this after deploying the frontend - leave empty for now)
 
    **Database Connection (Automatic):**
-   - Railway automatically provides `MYSQL_URL` from the MySQL service
-   - You don't need to set this manually!
+   - `MYSQL_URL` should already be there from Step 3.3
+   - If not, check that you've linked the MySQL service correctly
 
 3. Click **"Deploy"** or wait for Railway to auto-deploy
 
-### 3.4 Get Backend URL
+### 3.5 Get Backend URL
 
 1. Once deployed, go to the **"Settings"** tab
 2. Find **"Generate Domain"** and click it
 3. Copy the generated URL (e.g., `https://your-backend-name.up.railway.app`)
 4. **Save this URL** - you'll need it for the frontend!
+
+### 3.6 Verify Database Connection
+
+After deployment, check the logs to verify the database connection:
+1. Go to backend service → **"Deployments"** → Latest deployment → **"View Logs"**
+2. Look for log messages starting with "Database configuration check:"
+3. You should see:
+   - `MYSQL_URL exists: true`
+   - `Using database URL connection`
+   - Database host, port, and name
+4. If you see "Using individual environment variables (fallback)", the MySQL service is not linked correctly - go back to Step 3.3
 
 ## Step 4: Deploy the Frontend Service
 
@@ -152,7 +177,12 @@ Now we need to tell the backend where the frontend is located:
 ### Database connection issues
 
 - **Check MySQL service**: Make sure the MySQL service is running (green status)
-- **Check MYSQL_URL**: Railway should provide this automatically, but verify it exists in backend Variables
+- **Check MYSQL_URL**: 
+  - Verify it exists in backend Variables tab
+  - If missing, you need to link the MySQL service to the backend service (see Step 3.3)
+  - The error `ECONNREFUSED ::1:3306` means it's trying to connect to localhost instead of Railway's MySQL
+- **Service not linked**: Make sure you've linked the MySQL service to the backend service in Railway
+- **Check logs**: Look for "Database configuration check" messages in backend logs to see what connection is being used
 - **Tables don't exist**: If you see errors about missing tables, make sure you've run the database schema initialization (Step 2.1). The error will typically say "Table 'users' doesn't exist" or similar.
 
 ### Build fails
