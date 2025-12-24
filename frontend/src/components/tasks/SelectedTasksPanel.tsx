@@ -141,7 +141,7 @@ const SelectedTasksPanel: React.FC = () => {
   return (
     <Container>
       <Header>
-        <Title>Selected Tasks</Title>
+        <Title>Today's Focus</Title>
       </Header>
       <Content>
         {displayTasks.length === 0 ? (

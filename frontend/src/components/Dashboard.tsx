@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
   return (
     <>
       <Header>
-        <Title>Task Manager</Title>
+        <Title>Chio</Title>
         <UserInfo>
           <span>{user?.username}</span>
           <Button onClick={logout}>Logout</Button>
