@@ -289,10 +289,6 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const cancelTask = async (id: number) => {
     // Optimistic update - remove task immediately
-    const taskToRemove = missions
-      .flatMap(m => m.tasks || [])
-      .find(t => t.id === id);
-
     setMissions(prev => prev.map(mission => ({
       ...mission,
       tasks: mission.tasks?.filter(task => task.id !== id)
