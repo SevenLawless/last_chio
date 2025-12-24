@@ -133,6 +133,11 @@ const CategoryManager: React.FC = () => {
     handleClose();
   };
 
+  const handleSubmitClick = () => {
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    handleSubmit(fakeEvent);
+  };
+
   const handleDelete = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this category?')) {
       await deleteCategory(id);
@@ -149,7 +154,7 @@ const CategoryManager: React.FC = () => {
         footer={
           <>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button type="button" primary onClick={(e) => { e.preventDefault(); handleSubmit(e as any); }}>
+            <Button type="button" primary onClick={handleSubmitClick}>
               {editingCategory ? 'Update' : 'Create'}
             </Button>
           </>
