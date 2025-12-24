@@ -26,6 +26,26 @@ Before you begin, make sure you have:
 
 The database is now ready! Railway automatically provides connection details through environment variables.
 
+### 2.1 Initialize Database Schema
+
+**Important**: Before the backend can work, you need to create the database tables. Since this is a clean slate, you'll run the schema once:
+
+**Option 1: Using Railway's MySQL Query Interface**
+1. In your Railway project, find your **MySQL service**
+2. Click on it → Go to **"Data"** or **"Connect"** tab
+3. If available, click **"Query"** to open the SQL query interface
+4. Copy the entire contents of `backend/src/migrations/001_initial_schema.sql` from your repository
+5. Paste and execute the SQL script to create all tables
+
+**Option 2: Using Migration Script (After Backend Deployment)**
+1. After deploying the backend (Step 3), go to backend service → **"Deployments"** → Latest deployment
+2. Click **"Run Command"** or open the terminal
+3. Run: `npm run migrate`
+4. This will execute the migration script to create all tables
+
+**Option 3: Using Railway CLI (Advanced)**
+If you have Railway CLI installed, you can connect and run the SQL directly.
+
 ## Step 3: Deploy the Backend Service
 
 ### 3.1 Create Backend Service
@@ -133,6 +153,7 @@ Now we need to tell the backend where the frontend is located:
 
 - **Check MySQL service**: Make sure the MySQL service is running (green status)
 - **Check MYSQL_URL**: Railway should provide this automatically, but verify it exists in backend Variables
+- **Tables don't exist**: If you see errors about missing tables, make sure you've run the database schema initialization (Step 2.1). The error will typically say "Table 'users' doesn't exist" or similar.
 
 ### Build fails
 
