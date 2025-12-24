@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import path from 'path';
 import authRoutes from './routes/auth';
 import categoryRoutes from './routes/categories';
 import missionRoutes from './routes/missions';
@@ -16,11 +15,22 @@ const PORT = process.env.PORT || 3001;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // CORS configuration
+const getCorsOrigin = () => {
+  if (NODE_ENV === 'production') {
+    if (!process.env.FRONTEND_URL) {
+      console.warn('WARNING: FRONTEND_URL not set in production. CORS may not work correctly.');
+      return '*';
+    }
+    return process.env.FRONTEND_URL;
+  }
+  return '*';
+};
+
 const corsOptions = {
-  origin: NODE_ENV === 'production' 
-    ? (process.env.FRONTEND_URL || '*')
-    : '*',
-  credentials: true
+  origin: getCorsOrigin(),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 app.use(cors(corsOptions));
 
@@ -59,23 +69,6 @@ app.get('/health', async (req, res) => {
     });
   }
 });
-
-// Serve static files from frontend/dist in production
-if (NODE_ENV === 'production') {
-  const __dirname = path.resolve();
-  const frontendDist = path.join(__dirname, 'frontend/dist');
-  
-  app.use(express.static(frontendDist));
-  
-  // Catch-all handler: send back React's index.html file for client-side routing
-  app.get('*', (req, res) => {
-    // Don't serve index.html for API routes
-    if (req.path.startsWith('/api')) {
-      return res.status(404).json({ error: 'Not found' });
-    }
-    res.sendFile(path.join(frontendDist, 'index.html'));
-  });
-}
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

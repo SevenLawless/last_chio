@@ -154,97 +154,41 @@ The system automatically resets all selected tasks to NOT_STARTED state at 5am U
 
 ## Railway Deployment
 
-This app is configured for deployment on Railway as a monorepo (backend and frontend in a single service).
+This app is configured for deployment on Railway as **separate services** (backend and frontend deployed independently).
 
-### Prerequisites
+### Quick Start
 
-- Railway account (sign up at [railway.app](https://railway.app))
-- GitHub repository with your code
+For detailed step-by-step instructions, see **[DEPLOYMENT.md](./DEPLOYMENT.md)** - a beginner-friendly guide with screenshots and troubleshooting.
 
-### Deployment Steps
+### Architecture
 
-1. **Create a new Railway project**
-   - Go to Railway dashboard
-   - Click "New Project"
-   - Select "Deploy from GitHub repo"
-   - Choose your repository
+- **Backend Service**: Node.js/Express API server
+- **Frontend Service**: React static site served via `serve`
+- **Database Service**: Railway MySQL (automatically connected)
 
-2. **Add MySQL Database**
-   - In your Railway project, click "New"
-   - Select "Database" → "MySQL"
-   - Railway will automatically create a MySQL service and provide connection details
+### Environment Variables
 
-3. **Configure Environment Variables**
-   - In your Railway service, go to "Variables" tab
-   - Add the following environment variables:
-     ```
-     JWT_SECRET=your-strong-secret-key-here
-     NODE_ENV=production
-     ```
-   - Railway automatically provides:
-     - `MYSQL_URL` or `DATABASE_URL` (from MySQL service)
-     - `PORT` (automatically set)
+**Backend Service:**
+- `JWT_SECRET` (required) - Secret key for JWT tokens
+- `NODE_ENV` (required) - Set to `production`
+- `FRONTEND_URL` (required) - Your frontend service URL
+- `MYSQL_URL` (automatic) - Provided by Railway MySQL service
 
-4. **Run Database Migrations**
-   - After first deployment, run migrations manually:
-     - Go to Railway service → "Deployments" → Click on latest deployment
-     - Open "Deploy Logs" → Click "Run Command"
-     - Run: `cd backend && npm run migrate`
-   - Or set up a deploy hook in Railway to run migrations automatically
-
-5. **Deploy**
-   - Railway will automatically detect the `railway.json` configuration
-   - It will build both backend and frontend
-   - The backend will serve the frontend static files
-   - Your app will be available at the Railway-provided URL
-
-### Railway Configuration
-
-The `railway.json` file configures:
-- **Build**: Installs dependencies and builds both backend and frontend
-- **Start**: Runs the backend server which serves the frontend
-- **Health Check**: Uses `/health` endpoint
-
-### Environment Variables Reference
-
-See `backend/.env.example` for all available environment variables.
-
-**Required:**
-- `JWT_SECRET` - Secret key for JWT token signing (must be set)
-- `MYSQL_URL` or `DATABASE_URL` - Provided by Railway MySQL service
-- `PORT` - Provided automatically by Railway
-
-**Optional:**
-- `FRONTEND_URL` - Frontend URL for CORS (only needed if deploying separately)
-- `NODE_ENV` - Set to `production` for production deployment
-
-### Separate Frontend/Backend Deployment (Optional)
-
-If you want to deploy frontend and backend separately:
-
-1. **Backend Service:**
-   - Set `FRONTEND_URL` to your frontend URL
-   - CORS will allow requests from that URL
-
-2. **Frontend Service:**
-   - Set `VITE_API_URL` to your backend API URL
-   - Build will use that URL for API calls
-
-### Troubleshooting
-
-- **Database connection issues**: Verify `MYSQL_URL` is set correctly from MySQL service
-- **Migrations not running**: Run manually via Railway CLI or deploy hook
-- **Static files not serving**: Ensure `NODE_ENV=production` is set
-- **CORS errors**: Set `FRONTEND_URL` if deploying separately
+**Frontend Service:**
+- `VITE_API_URL` (required) - Your backend API URL (e.g., `https://your-backend.up.railway.app/api`)
 
 ### Health Check
 
-The app includes a health check endpoint at `/health` that:
+The backend includes a health check endpoint at `/health` that:
 - Returns server status
 - Checks database connectivity
 - Returns appropriate HTTP status codes
 
 Railway uses this for service health monitoring.
+
+### No Migrations Needed
+
+The database schema is created automatically on first use. No manual migrations required!
 
 ## Color Palette
 
