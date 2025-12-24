@@ -149,7 +149,7 @@ const CategoryManager: React.FC = () => {
         footer={
           <>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" primary onClick={handleSubmit}>
+            <Button type="button" primary onClick={(e) => { e.preventDefault(); handleSubmit(e as any); }}>
               {editingCategory ? 'Update' : 'Create'}
             </Button>
           </>

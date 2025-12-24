@@ -49,7 +49,7 @@ const TaskActions = styled.div`
   gap: ${theme.spacing.xs};
 `;
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, missionId, onSelect, isSelected }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, missionId: _missionId, onSelect, isSelected }) => {
   const { updateTask, cancelTask, addSelectedTask, selectedTasks, removeSelectedTask } = useTasks();
 
   const handleToggle = async () => {

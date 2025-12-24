@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { theme } from '../../styles/theme';
-import { useTasks, Category } from '../../contexts/TaskContext';
+import { useTasks } from '../../contexts/TaskContext';
 import Input from '../common/Input';
 import Button from '../common/Button';
 
@@ -55,7 +55,7 @@ const Select = styled.select`
 `;
 
 const TaskForm: React.FC<TaskFormProps> = ({ missionId, onClose, initialTitle = '', initialCategoryId = null }) => {
-  const { categories, createMission, createTask, updateMission } = useTasks();
+  const { categories, createMission, createTask } = useTasks();
   const [title, setTitle] = useState(initialTitle);
   const [categoryId, setCategoryId] = useState<number | null>(initialCategoryId);
 

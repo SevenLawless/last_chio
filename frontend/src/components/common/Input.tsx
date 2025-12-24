@@ -9,6 +9,7 @@ interface InputProps {
   onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   fullWidth?: boolean;
   autoFocus?: boolean;
+  required?: boolean;
 }
 
 const StyledInput = styled.input<InputProps>`

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { theme } from '../../styles/theme';
-import { Mission, useTasks } from '../../contexts/TaskContext';
+import { Mission, Category, useTasks } from '../../contexts/TaskContext';
 import TaskItem from './TaskItem';
 import TaskForm from './TaskForm';
 import CategoryBadge from '../categories/CategoryBadge';
@@ -91,8 +91,8 @@ const MissionItem: React.FC<MissionItemProps> = ({ mission }) => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editTitle, setEditTitle] = useState(mission.title);
 
-  const category = mission.category_id
-    ? categories.find(c => c.id === mission.category_id)
+  const category: Category | null = mission.category_id
+    ? (categories.find(c => c.id === mission.category_id) || null)
     : null;
 
   const handleToggle = async () => {
