@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { useTheme } from '../../contexts/ThemeContext';
 
 interface ColorPickerProps {
   label: string;
@@ -97,8 +96,6 @@ const PRESET_COLORS = [
 ];
 
 const ColorPicker: React.FC<ColorPickerProps> = ({ label, value, onChange }) => {
-  const { theme } = useTheme();
-
   const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const hex = e.target.value;
     if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
